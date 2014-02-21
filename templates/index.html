@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Minecraft API</title>
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="//assets.nyw.li/css/bootstrap-3.0.0/flatly.min.css">
+	<style>
+	.clickable {
+		cursor: pointer;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Minecraft API</h1>
+
+				<h4><span class="calls"></span> and counting API calls!</h4>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Server Status</h2>
+
+				<h3>GET /server/status</h3>
+
+				<div class="row">
+					<div class="col-md-6 col-sm-4">
+						<h4>Required Params</h4>
+
+						<ul>
+							<li><code>ip</code> &dash; <kbd>string</kbd> of IP or domain of server</li>
+						</ul>
+
+						<h4>Optional Params</h4>
+
+						<ul>
+							<li><code>port</code> &dash; <kbd>int</kbd> of port of server</li>
+							<li><code>favicon</code> &dash; <kbd>true or false</kbd> if should include favicon (this is a base64 version of the favicon)</li>
+							<li><code>players</code> &dash; <kbd>true or false</kbd> if should include some players (this does not include all players)</li>
+						</ul>
+					</div>
+
+					<div class="col-md-6 col-sm-8">
+						<h3 class="text-muted hidden example-header">Click header to view</h3>
+
+						<h4 class="example clickable" data-example="status-basic">Basic Response</h4>
+
+						<pre class="example-item status-basic">{
+  "motd": "\u00a7bSkyblock", 
+  "online": true, 
+  "players": {
+    "max": 500, 
+    "now": 395
+  }, 
+  "server": {
+    "name": "CraftBukkit 1.7.2", 
+    "protocol": 4
+  }, 
+  "time": 1393025705.725
+}</pre>
+
+						<h4 class="example clickable" data-example="status-favicon-players">With Favicon and Players</h4>
+
+						<pre class="example-item status-favicon-players">{
+  "favicon": "data:image/png;base64,[truncated]", 
+  "motd": "\u00a7aSkyblock", 
+  "online": true, 
+  "players": {
+    "max": 500, 
+    "now": 399, 
+    "sample": [
+      {
+        "id": "6e83197c49724b0c8ad91656235ad8e6", 
+        "name": "Bunnylover981"
+      }, 
+      {
+        "id": "9d1bd5f292e040e9b6251691d3cb2d8f", 
+        "name": "Dannymol"
+      }
+    ]
+  }, 
+  "server": {
+    "name": "CraftBukkit 1.7.2", 
+    "protocol": 4
+  }, 
+  "time": 1393025969.528
+}</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+	// use Ajax to load in total API calls
+	(function() {
+		// XMLHttpRequest object
+		var xhr = new XMLHttpRequest();
+		// set link to load
+		xhr.open('GET', '/stats', true);
+
+		// function to be executed upon load
+		xhr.onload = function() {
+			// convert JSON response to an Object
+			var resp = JSON.parse(xhr.responseText);
+
+			// find element on page and put the total number of calls there
+			document.querySelector('.calls').innerHTML = resp.stats;
+		};
+
+		// initiate request
+		xhr.send();
+	})();
+
+	// allow for headers to be clicked, and only hide examples when JavaScript is enabled
+	(function() {
+		// find all header elements
+		var headers = document.querySelectorAll('.example-header');
+
+		// iterate through header elements
+		for(var i = 0; i < headers.length; i++) {
+			// remove hidden class
+			headers[i].classList.remove('hidden');
+		}
+
+		// find all examples
+		var exampleElements = document.querySelectorAll('.example-item');
+
+		// iterate through all examples
+		for(var i = 0; i < exampleElements.length; i++) {
+			// hide element, in case JavaScript is not enabled
+			exampleElements[i].classList.add('hidden');
+		}
+
+		// find elements that should be clickable
+		var examples = document.querySelectorAll('.example');
+		// cache elements upon first click
+		var cache = {};
+
+		// function to be executed upon click
+		var handleClickAction = function() {
+			// get data attribute
+			var example = this.dataset.example;
+
+			// if we haven't already cached it
+			if(cache[example] === undefined) {
+				// find element and cache it
+				cache[example] = document.querySelector('.' + example);
+			}
+
+			// toggle hidden class
+			cache[example].classList.toggle('hidden');
+		};
+
+		// go through all examples to add click handler
+		for(var i = 0; i < examples.length; i++) {
+			// add click handler to element
+			examples[i].addEventListener('click', handleClickAction);
+		}
+	})();
+	</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-def parseServerStatus(data, favicon=False, players=True):
+def parse_server_data(data, favicon=False, players=True):
     result = {}
 
     time = data['time']

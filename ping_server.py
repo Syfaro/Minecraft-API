@@ -2,7 +2,7 @@ import socket
 import struct
 import json
 
-#stolen from https://gist.github.com/barneygale/1209061
+# stolen from https://gist.github.com/barneygale/1209061
 
 
 def unpack_varint(s):
@@ -47,12 +47,12 @@ def get_info(host='localhost', port=25565):
 
     # Send handshake + status request
     s.send(pack_data("\x00\x00" + pack_data(host.encode('utf8'))
-           + pack_port(port) + "\x01"))
+                     + pack_port(port) + "\x01"))
     s.send(pack_data("\x00"))
 
     # Read response
-    unpack_varint(s)     # Packet length
-    unpack_varint(s)     # Packet ID
+    unpack_varint(s)   # Packet length
+    unpack_varint(s)   # Packet ID
     l = unpack_varint(s)  # String length
 
     d = ""

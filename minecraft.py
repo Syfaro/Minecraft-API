@@ -1,32 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 from ping_server import get_info
-from helpers import parseServerStatus
-from cache import get_cache_item, set_cache_item
+from helpers import parse_server_data
+from cache import get_cache_item, set_cache_item, get_stats
 from hashlib import md5
 from time import time
-
-
-class InvalidUsage(Exception):
-    status_code = 400
-
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-
-        self.message = message
-
-        if status_code is not None:
-            self.status_code = status_code
-
-        self.payload = payload
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['status'] = 'error'
-        rv['message'] = self.message
-
-        return rv
+from exception import InvalidUsage
 
 
 @app.errorhandler(InvalidUsage)
@@ -39,7 +19,22 @@ def handle_invalid_usage(error):
 
 @app.route("/")
 def index():
-    return "Hello, world!"
+    return render_template('index.html')
+
+
+@app.route('/stats')
+def stats():
+    try:
+        result = get_stats()
+    except:
+        result = 0
+
+    if result is None:
+        result = 0
+
+    return jsonify({
+        'stats': int(result)
+    })
 
 
 @app.route('/server/status')
@@ -49,17 +44,22 @@ def server_status():
     if not ip:
         raise InvalidUsage('no ip')
 
-    if request.args.get('port') is None:
+    port = request.args.get('port')
+
+    if port is None:
         port = 25565
     else:
-        port = int(request.args.get('port'))
+        try:
+            port = int(port)
+        except:
+            raise InvalidUsage('invalid port')
 
     m = md5()
     m.update('%s%s' % (ip, port))
     m = m.hexdigest()
 
     try:
-        result = get_cache_item('1.3', m)
+        result = get_cache_item(m)
     except:
         result = False
 
@@ -68,7 +68,7 @@ def server_status():
         result['time'] = time()
         result['value'] = get_info(ip, port)
 
-        set_cache_item('1.3', m, result['value'])
+        set_cache_item(m, result['value'])
 
     if not result['value']:
         return jsonify({
@@ -76,21 +76,17 @@ def server_status():
             'online': False
         })
 
-    if request.args.get('favicon') is None:
-        favicon = False
-    elif request.args.get('favicon') == 'false':
+    if request.args.get('favicon') is None or request.args.get('favicon') == 'false':
         favicon = False
     else:
         favicon = True
 
-    if request.args.get('players') is None:
+    if request.args.get('players') is not None or request.args.get('players') == 'true':
         players = True
-    elif request.args.get('players') == 'false':
-        players = False
     else:
-        players = True
+        players = False
 
-    return jsonify(parseServerStatus(result, favicon, players))
+    return jsonify(parse_server_data(result, favicon, players))
 
 
 @app.route('/server/info')
