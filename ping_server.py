@@ -2,6 +2,8 @@ import socket
 import struct
 import json
 
+#stolen from https://gist.github.com/barneygale/1209061
+
 
 def unpack_varint(s):
     d = 0
