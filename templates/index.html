@@ -5,6 +5,10 @@
 	<meta name="viewport" content="width=device-width">
 	<link rel="stylesheet" href="//assets.nyw.li/css/bootstrap-3.0.0/flatly.min.css">
 	<style>
+	html {
+		overflow-y: scroll;
+	}
+
 	.clickable {
 		cursor: pointer;
 		-webkit-touch-callout: none;
@@ -22,7 +26,70 @@
 			<div class="col-md-12">
 				<h1>Minecraft API</h1>
 
-				<h4><span class="calls"></span> and counting API calls!</h4>
+				<h4 class="calls-container hidden"><span class="calls"></span> and counting API calls!</h4>
+
+				<h3>Note: all data is cached for <strong>five minutes</strong> before updating</h3>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Versions</h2>
+
+				<h3><code>GET /versions</code></h3>
+
+				<div class="row">
+					<div class="col-md-6 col-sm-4">
+						<h4>Required Params</h4>
+
+						<ul>
+							<li>None</li>
+						</ul>
+
+						<h4>Optional Params</h4>
+
+						<ul>
+							<li>None</li>
+						</ul>
+					</div>
+
+					<div class="col-md-6 col-sm-8">
+						<h3 class="text-muted hidden example-header">Click header to view</h3>
+
+						<h4 class="example clickable" data-example="versions">Basic Response</h4>
+
+						<pre class="example-item versions">{
+  "latest": {
+    "release": {
+      "id": "1.7.4", 
+      "niceTime": "8 days ago", 
+      "time": "2014-02-13T14:25:31+00:00"
+    }, 
+    "snapshot": {
+      "id": "14w08a", 
+      "niceTime": "2 days ago", 
+      "time": "2014-02-19T14:21:07+00:00"
+    }
+  }, 
+  "status": "success", 
+  "time": 1393044946.733, 
+  "versions": [
+    {
+      "id": "14w08a", 
+      "niceTime": "2 days ago", 
+      "time": "2014-02-19T14:21:07+00:00", 
+      "type": "snapshot"
+    }, 
+    {
+      "id": "14w07a", 
+      "niceTime": "7 days ago", 
+      "time": "2014-02-14T11:05:07+00:00", 
+      "type": "snapshot"
+    }
+  ]
+}</pre>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -30,7 +97,7 @@
 			<div class="col-md-12">
 				<h2>Server Status</h2>
 
-				<h3>GET /server/status</h3>
+				<h3><code>GET /server/status</code></h3>
 
 				<div class="row">
 					<div class="col-md-6 col-sm-4">
@@ -44,8 +111,8 @@
 
 						<ul>
 							<li><code>port</code> &dash; <kbd>int</kbd> of port of server</li>
-							<li><code>favicon</code> &dash; <kbd>true or false</kbd> if should include favicon (this is a base64 version of the favicon)</li>
-							<li><code>players</code> &dash; <kbd>true or false</kbd> if should include some players (this does not include all players)</li>
+							<li><code>favicon</code> &dash; <kbd>true</kbd> or <kbd>false</kbd> if should include favicon (this is a base64 version of the favicon)</li>
+							<li><code>players</code> &dash; <kbd>true</kbd> or <kbd>false</kbd> if should include some players (this does not include all players)</li>
 						</ul>
 					</div>
 
@@ -65,6 +132,7 @@
     "name": "CraftBukkit 1.7.2", 
     "protocol": 4
   }, 
+  "status": "success", 
   "time": 1393025705.725
 }</pre>
 
@@ -92,6 +160,7 @@
     "name": "CraftBukkit 1.7.2", 
     "protocol": 4
   }, 
+  "status": "success", 
   "time": 1393025969.528
 }</pre>
 					</div>
@@ -103,6 +172,9 @@
 	<script>
 	// use Ajax to load in total API calls
 	(function() {
+		// unhide stats (in case JavaScript is disabled)
+		document.querySelector('.calls-container').classList.remove('hidden');
+
 		// XMLHttpRequest object
 		var xhr = new XMLHttpRequest();
 		// set link to load

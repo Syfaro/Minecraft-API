@@ -1,3 +1,6 @@
+import arrow
+
+
 def parse_server_data(data, favicon=False, players=True):
     result = {}
 
@@ -5,6 +8,7 @@ def parse_server_data(data, favicon=False, players=True):
     data = data['value']
 
     result['time'] = time
+    result['status'] = 'success'
 
     result['online'] = True
     result['motd'] = data['description']
@@ -32,3 +36,9 @@ def parse_server_data(data, favicon=False, players=True):
     result['server']['protocol'] = data['version']['protocol']
 
     return result
+
+
+def format_date(date):
+    d = arrow.get(date)
+
+    return d.humanize()
