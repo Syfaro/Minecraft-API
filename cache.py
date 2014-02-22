@@ -15,9 +15,9 @@ def set_cache_item(key, value, page=False):
     r.set(key, json.dumps(the_item))
 
     if page:
-    	r.expire(key, 10)
+        r.expire(key, 10)
     else:
-    	r.expire(key, CACHE_TIMEOUT)
+        r.expire(key, CACHE_TIMEOUT)
 
 
 def get_cache_item(key):
@@ -29,4 +29,4 @@ def get_cache_item(key):
 
 
 def get_stats():
-	return r.get('mcapi')
+    return r.get('mcapi')

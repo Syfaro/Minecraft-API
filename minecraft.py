@@ -44,7 +44,8 @@ def get_versions():
     try:
         versions = get_cache_item('versions')
     except:
-        json = requests.get('http://s3.amazonaws.com/Minecraft.Download/versions/versions.json').json()
+        json = requests.get(
+            'http://s3.amazonaws.com/Minecraft.Download/versions/versions.json').json()
         set_cache_item('versions', json)
 
         versions = {}
@@ -79,9 +80,11 @@ def get_versions():
 
         output['latest'][version]['id'] = versions['latest'][version]
         output['latest'][version]['time'] = bykey[versions['latest'][version]]
-        output['latest'][version]['niceTime'] = format_date(bykey[versions['latest'][version]])
+        output['latest'][version]['niceTime'] = format_date(
+            bykey[versions['latest'][version]])
 
     return jsonify(output)
+
 
 @app.route('/server/status')
 def server_status():
