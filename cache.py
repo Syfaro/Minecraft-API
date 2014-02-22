@@ -1,12 +1,12 @@
-import fakeredis
+import redis
 import json
 from time import time
 
-r = fakeredis.FakeStrictRedis()
+r = redis.StrictRedis()
 CACHE_TIMEOUT = 60 * 5
 
 
-def set_cache_item(key, value, page=False):
+def set_cache_item(key, value):
     the_item = {}
 
     the_item['value'] = value
@@ -14,10 +14,7 @@ def set_cache_item(key, value, page=False):
 
     r.set(key, json.dumps(the_item))
 
-    if page:
-        r.expire(key, 10)
-    else:
-        r.expire(key, CACHE_TIMEOUT)
+    r.expire(key, CACHE_TIMEOUT)
 
 
 def get_cache_item(key):

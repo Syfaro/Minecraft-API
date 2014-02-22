@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, current_app
 app = Flask(__name__)
 
 from ping_server import get_info
@@ -7,8 +7,23 @@ from cache import get_cache_item, set_cache_item, get_stats
 from hashlib import md5
 from time import time
 from exception import InvalidUsage
+from functools import wraps
 
 import requests
+
+
+def jsonp(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        callback = request.args.get('callback', False)
+        if callback:
+            data = str(func(*args, **kwargs).data)
+            content = str(callback) + '(' + data + ')'
+            mimetype = 'application/javascript'
+            return current_app.response_class(content, mimetype=mimetype)
+        else:
+            return func(*args, **kwargs)
+    return decorated_function
 
 
 @app.errorhandler(InvalidUsage)
@@ -25,6 +40,7 @@ def index():
 
 
 @app.route('/stats')
+@jsonp
 def stats():
     try:
         result = get_stats()
@@ -40,6 +56,7 @@ def stats():
 
 
 @app.route('/versions')
+@jsonp
 def get_versions():
     try:
         versions = get_cache_item('versions')
@@ -87,6 +104,7 @@ def get_versions():
 
 
 @app.route('/server/status')
+@jsonp
 def server_status():
     ip = request.args.get('ip')
 
