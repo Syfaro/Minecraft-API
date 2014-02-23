@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Minecraft API</title>
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="//assets.nyw.li/css/bootstrap-3.0.0/flatly.min.css">
+	<style>
+	html {
+		overflow-y: scroll;
+	}
+
+	.clickable {
+		cursor: pointer;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Minecraft API Help</h1>
+
+				<h3>Not sure how to use it? You've come to the right place!</h3>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Requirements</h2>
+
+				<p>
+					To get started, you need to add the following line to your HTML file. This is allows for you to easily get data without having to use jQuery or writing your own code to pull the data.
+
+					<pre>&lt;script src="//api.syfaro.net/scripts/minecraft.min.js"&gt;&lt;/script&gt;</pre>
+
+					(there's even an unminified version if that's your kind of thing)
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Basic Usage</h2>
+
+				<p>
+					It's fairly easy to get data! I'm assuming you know at least a little bit of JavaScript for this next bit.
+				</p>
+
+				<p>
+					<pre>&lt;script&gt;
+MinecraftAPI.getVersions(function(err, versions) {
+    if(err) {
+      // handle error
+      return;
+    }
+
+    // handle data
+});
+&lt;/script&gt;</pre>
+				</p>
+				
+
+				<p>
+					You can also get the status of a Minecraft server!
+				</p>
+
+				<p>
+					<pre>&lt;script&gt;
+MinecraftAPI.getServerStatus('ip', { // set ip to your server's ip
+    port: 25565, // optional
+    favicon: true, // optional
+    players: true // optional
+}, function(err, status) {
+    if(err) {
+        // handle error
+        return;
+    }
+
+    // handle data
+});
+&lt;/script&gt;</pre>
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
