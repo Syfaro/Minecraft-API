@@ -181,6 +181,14 @@
 		</div>
 	</div>
 
+	<script src="//cdn.ravenjs.com/1.1.2/jquery,native/raven.min.js"></script>
+	<script>
+	// raven-js for use with Sentry
+	Raven.config('http://ef2592d98e0b40d5b8b56918b88ad4c1@sentry.syfaro.net/2').install();
+
+	// log all errors
+	window.onerror = Raven.process;
+	</script>
 	<script>
 	// use Ajax to load in total API calls
 	(function() {
