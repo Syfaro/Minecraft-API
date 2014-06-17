@@ -1,8 +1,9 @@
 import redis
 import json
+import config
 from time import time
 
-r = redis.StrictRedis()
+r = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
 CACHE_TIMEOUT = 60 * 5
 
 

@@ -38,6 +38,30 @@ def parse_server_data(data, favicon=False, players=True):
     return result
 
 
+def parse_old_data(data):
+    result = {}
+
+    time = data['time']
+    data = data['value']
+
+    result['time'] = time
+
+    result['online'] = True
+    result['motd'] = data['motd']
+    result['status'] = 'success'
+
+    result['players'] = {}
+
+    result['players']['max'] = data['max_players']
+    result['players']['now'] = data['players']
+
+    result['server'] = {}
+
+    result['server']['name'] = data['server_version']
+
+    return result
+
+
 def format_date(date):
     d = arrow.get(date)
 

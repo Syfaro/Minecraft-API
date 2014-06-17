@@ -1,4 +1,6 @@
-Flask==0.10.1
-arrow==0.4.2
-redis==2.9.0
-requests==2.1.0
+Flask
+arrow
+redis
+requests
+raven
+blinker
