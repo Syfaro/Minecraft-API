@@ -38,23 +38,16 @@ def jsonp(func):
 @app.errorhandler(InvalidUsage)
 @jsonp
 def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-
-    return response
+    return jsonify(error.to_dict())
 
 
 # I probably broke something / don't have good error handling
 @app.errorhandler(500)
 @jsonp
 def err_500(error):
-    response = jsonify({
+    return jsonify({
         "status": "error"
     })
-
-    respose.status_code = error.status_code
-
-    return response
 
 
 # Documentation!
