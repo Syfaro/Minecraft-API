@@ -169,7 +169,6 @@ def server_status():
         result['time'] = time()
 
         try:
-            print 'new'
             result['value'] = get_info(ip, port)
         except ValueError:  # Can't decode it as JSON, it's probably an old server
             olderServer = True
