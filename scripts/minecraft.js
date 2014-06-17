@@ -1,127 +1,148 @@
-(function() {
-	var SyfaroAPI, MinecraftAPI, baseURL;
+(function () {
+    'use strict';
 
-	baseURL = '//api.syfaro.net/minecraft/1.3';
+    var SyfaroAPI, MinecraftAPI, baseURL;
 
-	SyfaroAPI = (function() {
-		/**
-		 * @constructor
-		 */
-		function SyfaroAPI() {}
+    baseURL = '//api.syfaro.net/minecraft/1.3';
 
-		/**
-		 * Generates a query string from an object
-		 * @param  {Object} params params
-		 * @return {String}        querystring
-		 */
-		SyfaroAPI.prototype.queryString = function(params) {
-			var str, p;
+    SyfaroAPI = (function () {
+        /**
+         * @constructor
+         */
+        function SyfaroAPI() {}
 
-			str = [];
+        /**
+         * Generates a query string from an object
+         * @param  {Object} params params
+         * @return {String}        querystring
+         */
+        SyfaroAPI.prototype.queryString = function (params) {
+            var str, p;
 
-			for(p in params) {
-				if(params[p] === undefined) {
-					continue;
-				}
+            str = [];
 
-				if(params.hasOwnProperty(p)) {
-					str.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]));
-				}
-			}
+            for (p in params) {
+                if (params[p] === undefined) {
+                    continue;
+                }
 
-			return '?' + str.join('&');
-		};
+                if (params.hasOwnProperty(p)) {
+                    str.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]));
+                }
+            }
 
-		/**
-		 * Runs an XHR request for JSON
-		 * @param  {String}   endpoint API endpoint
-		 * @param  {Object}   params   GET params
-		 * @param  {Function} callback function to call when done
-		 * @return {undefined}            does not return
-		 */
-		SyfaroAPI.prototype.loadJSON = function(endpoint, params, callback) {
-			var xhr, url;
+            return '?' + str.join('&');
+        };
 
-			if(typeof(params) === 'function') {
-				callback = params;
-				params = {};
-			}
+        /**
+         * Runs an XHR request for JSON
+         * @param  {String}   endpoint API endpoint
+         * @param  {Object}   params   GET params
+         * @param  {Function} callback function to call when done
+         * @return {undefined}            does not return
+         */
+        SyfaroAPI.prototype.loadJSON = function (endpoint, params, callback) {
+            var xhr, url;
 
-			params = this.queryString(params);
+            if (typeof (params) === 'function') {
+                callback = params;
+                params = {};
+            }
 
-			url = baseURL + endpoint + params;
+            params = this.queryString(params);
 
-			xhr = new XMLHttpRequest;
+            url = baseURL + endpoint + params;
 
-			xhr.onerror = function() {
-				callback(true);
-			}
+            xhr = new XMLHttpRequest();
 
-			xhr.onload = function() {
-				var data;
+            xhr.onerror = function () {
+                callback(true);
+            };
 
-				try {
-					data = JSON.parse(xhr.responseText);
-				} catch (e) {
-					return callback(e);
-				}
+            xhr.onload = function () {
+                var data;
 
-				if(data.status == 'error') {
-					return callback(data.error);
-				}
+                try {
+                    data = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    return callback(e);
+                }
 
-				callback(undefined, data);
-			};
+                if (data.status === 'error') {
+                    return callback(data.error);
+                }
 
-			xhr.open('GET', url, true);
+                callback(undefined, data);
+            };
 
-			xhr.send();
-		};
+            xhr.open('GET', url, true);
 
-		return SyfaroAPI;
-	})();
+            xhr.send();
+        };
 
-	MinecraftAPI = (function() {
-		var api;
+        return SyfaroAPI;
+    }());
 
-		/**
-		 * @constructor
-		 */
-		function MinecraftAPI() {}
+    MinecraftAPI = (function () {
+        var api;
 
-		api = new SyfaroAPI();
+        /**
+         * @constructor
+         */
+        function MinecraftAPI() {}
 
-		/**
-		 * Gets Minecraft versions
-		 * @param  {Function} callback callback function
-		 * @return {undefined}            does not return
-		 */
-		MinecraftAPI.prototype.getVersions = function(callback) {
-			api.loadJSON('/versions', callback);
-		};
-		MinecraftAPI.prototype['getVersions'] = MinecraftAPI.prototype.getVersions;
+        api = new SyfaroAPI();
 
-		/**
-		 * Gets the status of a Minecraft server
-		 * @param  {String}   ip       ip or domain of server
-		 * @param  {Object}   options  extra options, such as port or players
-		 * @param  {Function} callback callback function
-		 * @return {undefined}            does not return
-		 */
-		MinecraftAPI.prototype.getServerStatus = function(ip, options, callback) {
-			if(typeof(options) === 'function') {
-				callback = options;
-				options = {};
-			}
+        /**
+         * Gets Minecraft versions
+         * @param  {Function} callback callback function
+         * @return {undefined}            does not return
+         */
+        MinecraftAPI.prototype.getVersions = function (callback) {
+            api.loadJSON('/versions', callback);
+        };
+        MinecraftAPI.prototype['getVersions'] = MinecraftAPI.prototype.getVersions;
 
-			options['ip'] = ip;
+        /**
+         * Gets the status of a Minecraft server
+         * @param  {String}   ip       ip or domain of server
+         * @param  {Object}   options  extra options, such as port or players
+         * @param  {Function} callback callback function
+         * @return {undefined}            does not return
+         */
+        MinecraftAPI.prototype.getServerStatus = function (ip, options, callback) {
+            if (typeof (options) === 'function') {
+                callback = options;
+                options = {};
+            }
 
-			api.loadJSON('/server/status', options, callback);
-		};
-		MinecraftAPI.prototype['getServerStatus'] = MinecraftAPI.prototype.getServerStatus;
+            options['ip'] = ip;
 
-		return MinecraftAPI;
-	})();
+            api.loadJSON('/server/status', options, callback);
+        };
+        MinecraftAPI.prototype['getServerStatus'] = MinecraftAPI.prototype.getServerStatus;
 
-	window['MinecraftAPI'] = new MinecraftAPI();
-})();
+        /**
+         * Queries a Minecraft server
+         * @param  {String}   ip       ip or domain of server
+         * @param  {Object}   options  extra options, such as port
+         * @param  {Function} callback callback function
+         * @return {undefined}            does not return
+         */
+        MinecraftAPI.prototype.getServerQuery = function (ip, options, callback) {
+            if (typeof (options) === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            options['ip'] = ip;
+
+            api.loadJSON('/server/info', options, callback);
+        };
+        MinecraftAPI.prototype['getServerQuery'] = MinecraftAPI.prototype.getServerQuery;
+
+        return MinecraftAPI;
+    }());
+
+    window['MinecraftAPI'] = new MinecraftAPI();
+}());
