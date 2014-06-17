@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, render_template, current_app
 app = Flask(__name__)
 
 from ping import get_info, get_info_old
-from helpers import parse_server_data, parse_old_data, format_date
+from mcquery import MCQuery
+from helpers import parse_server_data, parse_old_data, parse_query_data, format_date
 from cache import get_cache_item, set_cache_item, get_stats
 from hashlib import md5
 from time import time
@@ -209,6 +210,56 @@ def server_status():
         result = parse_server_data(result, favicon, players)
 
     return jsonify(result)
+
+
+@app.route('/server/info')
+@jsonp
+def server_info():
+    ip = request.args.get('ip')
+
+    if not ip:
+        raise InvalidUsage('no ip')
+
+    port = request.args.get('port')
+
+    if port is None:
+        port = 25565
+    else:
+        try:
+            port = int(port)
+        except:
+            raise InvalidUsage('invalid port')
+
+    m = md5()
+    m.update('q%s%s' % (ip, port))
+    m = m.hexdigest()
+
+    try:
+        result = get_cache_item(m)
+    except:
+        result = False
+
+    if not result:
+        result = {}
+        result['time'] = time()
+
+        try:
+            result['value'] = MCQuery(ip, port).full_stat()
+        except Exception as e:
+            print e
+            result['value'] = False
+
+        print result
+
+        set_cache_item(m, result['value'])
+
+    if not result['value']:
+        return jsonify({
+            'status': 'success',
+            'online': False
+        })
+
+    return jsonify(parse_query_data(result))
 
 
 if __name__ == '__main__':

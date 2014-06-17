@@ -1,5 +1,5 @@
 import redis
-import json
+import pickle
 import config
 from time import time
 
@@ -13,7 +13,7 @@ def set_cache_item(key, value):
     the_item['value'] = value
     the_item['time'] = time()
 
-    r.set(key, json.dumps(the_item))
+    r.set(key, pickle.dumps(the_item))
 
     r.expire(key, CACHE_TIMEOUT)
 
@@ -23,7 +23,10 @@ def get_cache_item(key):
 
     r.incr('mcapi')
 
-    return json.loads(the_item)
+    if the_item is None:
+        return None
+
+    return pickle.loads(the_item)
 
 
 def get_stats():

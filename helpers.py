@@ -11,7 +11,7 @@ def parse_server_data(data, favicon=False, players=True):
     result['status'] = 'success'
 
     result['online'] = True
-    result['motd'] = data['description']
+    result['motd'] = data['description'].decode('utf-8', 'ignore')
 
     result['players'] = {}
 
@@ -47,7 +47,7 @@ def parse_old_data(data):
     result['time'] = time
 
     result['online'] = True
-    result['motd'] = data['motd']
+    result['motd'] = data['motd'].decode('utf-8', 'ignore')
     result['status'] = 'success'
 
     result['players'] = {}
@@ -58,6 +58,35 @@ def parse_old_data(data):
     result['server'] = {}
 
     result['server']['name'] = data['server_version']
+
+    return result
+
+
+def parse_query_data(data):
+    result = {}
+
+    time = data['time']
+    data = data['value']
+
+    result['time'] = time
+
+    result['online'] = True
+    result['motd'] = data['motd'].decode('utf-8', 'ignore')
+    result['map'] = data['map']
+    result['type'] = data['gametype']
+    result['status'] = 'success'
+
+    result['server'] = {}
+
+    result['server']['mod'] = data['server_mod']
+    result['server']['plugins'] = data['plugins']
+
+    result['players'] = {}
+
+    result['players']['now'] = data['numplayers']
+    result['players']['max'] = data['maxplayers']
+
+    result['players']['list'] = data['players']
 
     return result
 
