@@ -11,7 +11,7 @@ def parse_server_data(data, favicon=False, players=True):
     result['status'] = 'success'
 
     result['online'] = True
-    result['motd'] = data['description'].decode('utf-8', 'ignore')
+    result['motd'] = data['description']
 
     result['players'] = {}
 
@@ -47,7 +47,7 @@ def parse_old_data(data):
     result['time'] = time
 
     result['online'] = True
-    result['motd'] = data['motd'].decode('utf-8', 'ignore')
+    result['motd'] = data['motd']
     result['status'] = 'success'
 
     result['players'] = {}
