@@ -172,7 +172,6 @@ def server_status():
             result['value'] = False
 
         if olderServer:
-            print 'test'
             try:
                 result['value'] = get_info_old(ip, port)
                 result['value']['old'] = True
@@ -239,10 +238,7 @@ def server_info():
         try:
             result['value'] = MCQuery(ip, port).full_stat()
         except Exception as e:
-            print e
             result['value'] = False
-
-        print result
 
         set_cache_item(m, result['value'])
 
